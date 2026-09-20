@@ -23,9 +23,10 @@ const shipment = await trackMSC("MSDU6702323");
 
 console.log(shipment); */
 
+
 const url = "https://www.msc.com/api/feature/tools/TrackingInfo";
 
-async function trackMSC(containerNumber) {
+export async function trackMSC(containerNumber) {
     const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -37,9 +38,6 @@ async function trackMSC(containerNumber) {
             trackingMode: "0"
         })
     });
-
-    console.log("Status:", response.status);
-    console.log("Content-Type:", response.headers.get("content-type"));
 
     const data = await response.json();
 

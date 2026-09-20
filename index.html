@@ -1,16 +1,62 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shipment Tracker</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Shipment Tracker</h1>
 
-    <label for="container">Container number:</label>
-    <input type="text" id="container">
+    <label for="containerNumber">Container number:</label>
+    <input id="containerNumber" type="text" />
 
-    <button>Track</button>
-</body>
+    <button id="trackButton">Track</button>
+
+    <div id="shipment"></div>
+
+    <script>
+      const input = document.getElementById('containerNumber');
+      const button = document.getElementById('trackButton');
+      const shipment = document.getElementById('shipment');
+
+      button.addEventListener('click', async () => {
+        const containerNumber = input.value;
+
+        const response = await fetch('/track?container=' + containerNumber);
+
+        const data = await response.json();
+
+        shipment.innerHTML = `
+                <h2>${data.containerNumber}</h2>
+
+                <p>
+                    <strong>Type:</strong>
+                    ${data.containerType}
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+                    ${data.delivered ? 'Delivered' : 'In transit'}
+                </p>
+
+                <p>
+                    <strong>Last location:</strong>
+                    ${data.latestLocation}
+                </p>
+
+                <h3>Latest event</h3>
+
+                <p>
+                    <strong>${data.latestEvent.Date}</strong>
+                    ${data.latestEvent.Description}
+                </p>
+
+                <p>
+                    ${data.latestEvent.Location}
+                </p>
+            `;
+      });
+    </script>
+  </body>
 </html>
