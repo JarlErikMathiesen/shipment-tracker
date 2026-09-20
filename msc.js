@@ -27,3 +27,8 @@ export async function trackMSC(containerNumber) {
 
   return text;
 }
+
+const response = await fetch('https://www.msc.com');
+
+console.log('MSC homepage status:', response.status);
+console.log('MSC homepage content type:', response.headers.get('content-type'));
