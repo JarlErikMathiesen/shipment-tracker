@@ -13,7 +13,11 @@ export async function trackMSC(containerNumber) {
     }),
   });
 
-  const data = await response.json();
+  const text = await response.text();
 
-  return data;
+  console.log('MSC status:', response.status);
+  console.log('MSC content type:', response.headers.get('content-type'));
+  console.log('MSC response:', text);
+
+  return text;
 }
