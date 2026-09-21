@@ -16,27 +16,60 @@ const server = http.createServer(async (req, res) => {
 
   if (req.url.startsWith('/track')) {
     const url = new URL(req.url, `http://${req.headers.host}`);
-    const containerNumber = url.searchParams.get('container');
 
-    const result = await trackMSC(containerNumber);
+    const containerNumber = url.searchParams
+      .get('container')
+      ?.trim()
+      .toUpperCase();
 
-    const billOfLading = result.Data.BillOfLadings[0];
-    const container = billOfLading.ContainersInfo[0];
+    console.log('Container received:', JSON.stringify(containerNumber));
 
-    const shipment = {
-      containerNumber: container.ContainerNumber,
-      containerType: container.ContainerType,
-      delivered: container.Delivered,
-      latestLocation: container.LatestMove,
-      latestEvent: container.Events[0],
-      vessel: container.Events[3].Vessel.IMO,
-    };
+    try {
+      const result = await trackMSC(containerNumber);
 
-    res.writeHead(200, {
-      'Content-Type': 'application/json',
-    });
+      if (!result.IsSuccess) {
+        res.writeHead(400, {
+          'Content-Type': 'application/json',
+        });
 
-    res.end(JSON.stringify(shipment));
+        res.end(
+          JSON.stringify({
+            error: result.Data,
+          }),
+        );
+
+        return;
+      }
+
+      const billOfLading = result.Data.BillOfLadings[0];
+      const container = billOfLading.ContainersInfo[0];
+
+      const shipment = {
+        containerNumber: container.ContainerNumber,
+        containerType: container.ContainerType,
+        delivered: container.Delivered,
+        latestLocation: container.LatestMove,
+        latestEvent: container.Events[0],
+      };
+
+      res.writeHead(200, {
+        'Content-Type': 'application/json',
+      });
+
+      res.end(JSON.stringify(shipment));
+    } catch (error) {
+      console.error('Tracking error:', error);
+
+      res.writeHead(500, {
+        'Content-Type': 'application/json',
+      });
+
+      res.end(
+        JSON.stringify({
+          error: 'Unable to track container',
+        }),
+      );
+    }
 
     return;
   }

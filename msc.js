@@ -13,22 +13,15 @@ export async function trackMSC(containerNumber) {
     }),
   });
 
-  console.log('MSC status:', response.status);
-
-  console.log('MSC headers:');
-  for (const [name, value] of response.headers) {
-    console.log(`${name}: ${value}`);
+  if (!response.ok) {
+    throw new Error(`MSC returned HTTP ${response.status}`);
   }
 
-  const text = await response.text();
+  const data = await response.json();
 
-  console.log('MSC response:');
-  console.log(text);
+  console.log('MSC data:', JSON.stringify(data, null, 2));
 
-  return text;
+  return data;
 }
 
-const response = await fetch('https://www.msc.com');
-
-console.log('MSC homepage status:', response.status);
-console.log('MSC homepage content type:', response.headers.get('content-type'));
+/* MSDU6702323 */
