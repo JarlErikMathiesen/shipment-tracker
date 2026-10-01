@@ -9,5 +9,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@napi-rs/canvas": "^1.0.9",
+    "pdf-parse": "^2.4.5"
+  }
 }
